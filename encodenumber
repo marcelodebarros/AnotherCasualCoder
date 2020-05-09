@@ -1,0 +1,45 @@
+Problem is this one: https://leetcode.com/problems/encode-number/
+
+A naive approach would be to interate thru all the numbers all the way to num while keeping track of the powers of two passed along the way. 
+Such an approach will take O(N)-time and O(1)-space. Given that N = 10^9, it becomes an intractable approach.
+
+A better approach would be to sum up all the powers of two until you go over the input number "num". Keep track of the previous sum, 
+and also how many bits you'll need. For each power of two added to the sum, increase the number of bits by one.
+Now the solution will then be just the binary representation of num - previous_sum. The reason that you need the number of bits is just to
+pad in the front the result with the needed zeros.
+
+To find the time complexity, notice that to get to num in the "for" loop, you're adding powers of two. Hence the limit of the loop
+will be some power of two, or 2^limit = num, and taking the log on both sides we'll then have limit = log2(num), hence the execution
+time is O(Log2(N))-time. No extra space is used, hence we have O(1)-space. Code is below, cheers, Marcelo.
+
+public class Solution
+{
+    public string Encode(int num)
+    {
+        //Start going up summing the powers of 2 until you go over the number
+        //Then do a linear search and return the number in binary format
+
+        //Special case
+        if (num == 0) return "";
+
+        int power = 1;
+        int sumPower = 0;
+        int sumPowerBefore = 0;
+        int numBits = 0;
+
+        while (sumPower <= num)
+        {
+            numBits++;
+            sumPowerBefore = sumPower;
+            sumPower += power;
+            power *= 2;
+        }
+        numBits--;
+
+        int retVal = num - sumPowerBefore;
+        string binRetVal = Convert.ToString(retVal, 2);
+        while (binRetVal.Length < numBits) binRetVal = "0" + binRetVal;
+
+        return binRetVal;
+    }
+}
